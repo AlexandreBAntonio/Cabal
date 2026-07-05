@@ -2,3 +2,7 @@
 .godot/
 *.import
 export_presets.cfg.orig
+
+# Saída de export
+build/*
+!build/.gitkeep
