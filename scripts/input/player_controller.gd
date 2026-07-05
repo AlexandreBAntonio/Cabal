@@ -19,7 +19,7 @@ func _physics_process(_delta: float) -> void:
 	# WASD relativo à câmera -> direção no mundo
 	var iv := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var cam_basis := rig.get_camera_basis()
-	var fwd := -cam_basis.z
+	var fwd: Vector3 = -cam_basis.z
 	fwd.y = 0.0
 	fwd = fwd.normalized()
 	var right := cam_basis.x

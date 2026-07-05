@@ -319,7 +319,7 @@ func _do_melee_aoe(sk: SkillData, instant: bool, bonus: float) -> void:
 	state = State.CASTING
 	if not instant and sk.cast_time > 0.0:
 		await get_tree().create_timer(sk.cast_time).timeout
-	var interval := sk.duration / sk.hits if sk.hits > 1 else 0.0
+	var interval: float = sk.duration / float(sk.hits) if sk.hits > 1 else 0.0
 	for h in sk.hits:
 		var victims: Array = await _query_aoe(sk)
 		for v in victims:
