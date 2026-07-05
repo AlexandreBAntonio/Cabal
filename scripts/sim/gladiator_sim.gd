@@ -113,7 +113,7 @@ func _tick_timers(delta: float) -> void:
 			_buffered_action = 0
 		elif state == State.FREE:
 			var action := _buffered_action
-			var can_fire := (action >= 1 and _cooldowns.get(action, 0.0) <= 0.0) \
+			var can_fire: bool = (action >= 1 and get_cooldown(action) <= 0.0) \
 				or (action == -1 and _basic_recover_left <= 0.0)
 			if can_fire:
 				_buffered_action = 0
