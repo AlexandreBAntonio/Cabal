@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/sim/skill_data.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+display_name = "Whirlwind"
+type = 1
+damage = 90.0
+hits = 3
+mp_cost = 50.0
+cooldown = 8.0
+reach = 4.0
+aoe_radius = 4.0
+aoe_forward_offset = 0.0
+cast_time = 0.15
+duration = 1.5
+stun_duration = 0.0
+dash_distance = 0.0
+buff_damage_mult = 1.0
+buff_attack_speed_mult = 1.0
+heavy_hit = false

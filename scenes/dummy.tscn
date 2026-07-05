@@ -1,0 +1,60 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/sim/dummy_sim.gd" id="1_sim"]
+[ext_resource type="Script" path="res://scripts/view/dummy_view.gd" id="2_view"]
+
+[sub_resource type="CapsuleShape3D" id="shape_body"]
+radius = 0.5
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="mat_dummy"]
+albedo_color = Color(0.75, 0.3, 0.2, 1)
+
+[sub_resource type="CapsuleMesh" id="mesh_body"]
+radius = 0.5
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="mat_bar_bg"]
+transparency = 1
+render_priority = 1
+billboard_mode = 1
+albedo_color = Color(0.05, 0.05, 0.06, 0.95)
+shading_mode = 0
+
+[sub_resource type="StandardMaterial3D" id="mat_bar_fill"]
+transparency = 1
+render_priority = 2
+billboard_mode = 1
+albedo_color = Color(0.2, 0.85, 0.25, 1)
+shading_mode = 0
+
+[sub_resource type="QuadMesh" id="mesh_bar"]
+size = Vector2(1.1, 0.12)
+
+[node name="Dummy" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_sim")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("shape_body")
+
+[node name="View" type="Node3D" parent="."]
+script = ExtResource("2_view")
+
+[node name="Mesh" type="MeshInstance3D" parent="View"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("mesh_body")
+surface_material_override/0 = SubResource("mat_dummy")
+
+[node name="BarAnchor" type="Node3D" parent="View"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+
+[node name="Bg" type="MeshInstance3D" parent="View/BarAnchor"]
+mesh = SubResource("mesh_bar")
+surface_material_override/0 = SubResource("mat_bar_bg")
+
+[node name="Fill" type="MeshInstance3D" parent="View/BarAnchor"]
+mesh = SubResource("mesh_bar")
+surface_material_override/0 = SubResource("mat_bar_fill")

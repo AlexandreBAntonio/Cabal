@@ -1,0 +1,68 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/sim/gladiator_sim.gd" id="1_sim"]
+[ext_resource type="Script" path="res://scripts/input/player_controller.gd" id="2_ctrl"]
+[ext_resource type="Script" path="res://scripts/view/character_view.gd" id="3_view"]
+[ext_resource type="Script" path="res://scripts/view/camera_rig.gd" id="4_cam"]
+
+[sub_resource type="CapsuleShape3D" id="shape_body"]
+radius = 0.45
+height = 1.8
+
+[sub_resource type="SphereShape3D" id="shape_hitbox"]
+radius = 1.0
+
+[sub_resource type="StandardMaterial3D" id="mat_player"]
+albedo_color = Color(0.25, 0.45, 0.9, 1)
+
+[sub_resource type="CapsuleMesh" id="mesh_body"]
+radius = 0.45
+height = 1.8
+
+[sub_resource type="BoxMesh" id="mesh_nose"]
+size = Vector3(0.18, 0.18, 0.35)
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 1
+collision_mask = 3
+script = ExtResource("1_sim")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("shape_body")
+
+[node name="SkillHitbox" type="Area3D" parent="."]
+monitoring = false
+monitorable = false
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SkillHitbox"]
+shape = SubResource("shape_hitbox")
+
+[node name="Controller" type="Node" parent="."]
+script = ExtResource("2_ctrl")
+
+[node name="View" type="Node3D" parent="."]
+script = ExtResource("3_view")
+
+[node name="Mesh" type="MeshInstance3D" parent="View"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("mesh_body")
+surface_material_override/0 = SubResource("mat_player")
+
+[node name="Nose" type="MeshInstance3D" parent="View"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.5)
+mesh = SubResource("mesh_nose")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="View"]
+
+[node name="CameraRig" type="Node3D" parent="."]
+script = ExtResource("4_cam")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraRig"]
+spring_length = 6.5
+margin = 0.3
+collision_mask = 1
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/SpringArm3D"]

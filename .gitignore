@@ -1,0 +1,4 @@
+# Cache/importados do Godot
+.godot/
+*.import
+export_presets.cfg.orig
