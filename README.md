@@ -34,7 +34,8 @@ contra training dummies.
 
 1. Andar com WASD, orbitar câmera com botão direito, zoom com scroll.
 2. Tab alterna entre os 5 dummies; clique esquerdo também seleciona.
-3. Espaço perto do dummy: cadeia de 3 golpes se apertar no ritmo.
+3. Espaço perto do dummy: cadeia de 3 golpes se apertar no ritmo. Dentro do
+   alcance, o personagem vira e fecha a distância sozinho (estilo Cabal).
 4. Skills 1–5: custo de MP, cooldown no quickslot, efeitos (launcher,
    AoE de 3 hits, dash com stun, AoE frontal pesado, buff Berserk).
 5. R ativa o combo: usar a skill com o marcador na zona amarela encadeia

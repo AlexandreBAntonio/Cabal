@@ -68,6 +68,7 @@ var _buff_attack_speed_mult := 1.0
 var _dash_skill: SkillData = null
 var _dash_bonus := 1.0
 var _dash_traveled := 0.0
+var _approach_active := false    ## golpe melee em andamento: fecha a distância sozinho
 var _rng := RandomNumberGenerator.new()
 
 @onready var _hitbox: Area3D = $SkillHitbox
@@ -118,6 +119,11 @@ func _ground_move(delta: float) -> void:
 	# movimento travado durante combo (fiel ao Cabal) e durante ações
 	var can_move := state == State.FREE and not combo.active
 	var dir := _move_dir if can_move else Vector3.ZERO
+	# targeting estilo Cabal: golpe melee dentro do alcance aproxima sozinho
+	if _approach_active and _has_live_target() and _dist_to_target() > 1.6:
+		dir = global_position.direction_to(target.global_position)
+		dir.y = 0.0
+		dir = dir.normalized()
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
 	var rate := ACCEL if dir.length() > 0.01 else DECEL
 	horizontal = horizontal.move_toward(dir * move_speed, rate * delta)
@@ -223,9 +229,11 @@ func cmd_basic_attack() -> void:
 		return
 	_face_target_instant()
 	state = State.ATTACKING
+	_approach_active = true
 	var idx := _chain_index
 	var speed := _buff_attack_speed_mult
 	await get_tree().create_timer(BASIC_WINDUP / speed).timeout
+	_approach_active = false
 	if _has_live_target() and _dist_to_target() <= BASIC_RANGE + 0.5:
 		_deal_damage_to(target, BASIC_DAMAGE[idx], false)
 	basic_attack_performed.emit(idx)
@@ -296,7 +304,9 @@ func _do_melee_single(sk: SkillData, instant: bool, bonus: float) -> void:
 	_face_target_instant()
 	state = State.CASTING
 	if not instant and sk.cast_time > 0.0:
+		_approach_active = true
 		await get_tree().create_timer(sk.cast_time).timeout
+		_approach_active = false
 	if _has_live_target() and _dist_to_target() <= sk.reach + 1.0:
 		_deal_damage_to(target, sk.damage, sk.heavy_hit, bonus)
 		if sk.stun_duration > 0.0:

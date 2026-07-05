@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/sim/gladiator_sim.gd" id="1_sim"]
 [ext_resource type="Script" path="res://scripts/input/player_controller.gd" id="2_ctrl"]
@@ -21,6 +21,8 @@ height = 1.8
 
 [sub_resource type="BoxMesh" id="mesh_nose"]
 size = Vector3(0.18, 0.18, 0.35)
+
+[sub_resource type="AnimationNodeStateMachine" id="anim_sm"]
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 1
@@ -56,6 +58,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.5)
 mesh = SubResource("mesh_nose")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="View"]
+
+[node name="AnimationTree" type="AnimationTree" parent="View"]
+tree_root = SubResource("anim_sm")
+anim_player = NodePath("../AnimationPlayer")
+active = false
 
 [node name="CameraRig" type="Node3D" parent="."]
 script = ExtResource("4_cam")
