@@ -18,6 +18,18 @@ contra training dummies.
   gameplay.
 - `data/skills/` — skills como Resources (`SkillData`), nada hardcoded.
 
+## Como rodar (Windows, um clique)
+
+1. Baixe o ZIP desta branch e extraia em qualquer pasta.
+2. Dê dois cliques em **`play.bat`** — na primeira vez ele baixa o Godot 4.3
+   portátil (release oficial, ~55 MB) para a pasta `godot/` do projeto e abre
+   o editor. Nada é instalado no sistema.
+3. No editor, aperte **F5** para jogar.
+
+Se preferir manualmente: instale o Godot 4.3+ Standard de
+[godotengine.org](https://godotengine.org/download/windows), importe o
+`project.godot` e aperte F5.
+
 ## Controles
 
 | Tecla | Ação |

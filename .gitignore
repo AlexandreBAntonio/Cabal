@@ -6,3 +6,7 @@ export_presets.cfg.orig
 # Saída de export
 build/*
 !build/.gitkeep
+
+# Godot portátil baixado pelo play.bat
+godot/
+godot.zip
