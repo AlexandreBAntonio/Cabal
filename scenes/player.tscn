@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/sim/gladiator_sim.gd" id="1_sim"]
 [ext_resource type="Script" path="res://scripts/input/player_controller.gd" id="2_ctrl"]
 [ext_resource type="Script" path="res://scripts/view/character_view.gd" id="3_view"]
 [ext_resource type="Script" path="res://scripts/view/camera_rig.gd" id="4_cam"]
+[ext_resource type="Script" path="res://scripts/view/skill_vfx.gd" id="5_vfx"]
 
 [sub_resource type="CapsuleShape3D" id="shape_body"]
 radius = 0.45
@@ -13,7 +14,12 @@ height = 1.8
 radius = 1.0
 
 [sub_resource type="StandardMaterial3D" id="mat_player"]
-albedo_color = Color(0.25, 0.45, 0.9, 1)
+albedo_color = Color(0.28, 0.48, 0.95, 1)
+metallic = 0.4
+roughness = 0.35
+rim_enabled = true
+rim = 0.6
+rim_tint = 0.3
 
 [sub_resource type="CapsuleMesh" id="mesh_body"]
 radius = 0.45
@@ -44,6 +50,9 @@ shape = SubResource("shape_hitbox")
 
 [node name="Controller" type="Node" parent="."]
 script = ExtResource("2_ctrl")
+
+[node name="SkillVfx" type="Node3D" parent="."]
+script = ExtResource("5_vfx")
 
 [node name="View" type="Node3D" parent="."]
 script = ExtResource("3_view")

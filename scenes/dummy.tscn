@@ -8,7 +8,12 @@ radius = 0.5
 height = 2.0
 
 [sub_resource type="StandardMaterial3D" id="mat_dummy"]
-albedo_color = Color(0.75, 0.3, 0.2, 1)
+albedo_color = Color(0.78, 0.32, 0.22, 1)
+metallic = 0.15
+roughness = 0.55
+rim_enabled = true
+rim = 0.4
+rim_tint = 0.2
 
 [sub_resource type="CapsuleMesh" id="mesh_body"]
 radius = 0.5

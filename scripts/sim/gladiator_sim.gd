@@ -48,6 +48,7 @@ const CHAIN_WINDOW := 0.85       ## janela p/ encadear o próximo golpe básico
 const TARGET_MAX_DIST := 25.0
 const DASH_SPEED := 22.0
 const DASH_IMPACT_DIST := 1.6
+const BUFFER_WINDOW := 0.35      ## input buffering: guarda o comando por até 350ms
 
 enum State { FREE, ATTACKING, CASTING, DASHING }
 
@@ -69,6 +70,9 @@ var _dash_skill: SkillData = null
 var _dash_bonus := 1.0
 var _dash_traveled := 0.0
 var _approach_active := false    ## golpe melee em andamento: fecha a distância sozinho
+var _basic_recover_left := 0.0   ## recuperação do básico (cancelável por skill)
+var _buffered_action := 0        ## -1 = básico, 1..5 = skill, 0 = nada
+var _buffer_left := 0.0
 var _rng := RandomNumberGenerator.new()
 
 @onready var _hitbox: Area3D = $SkillHitbox
@@ -101,6 +105,23 @@ func _physics_process(delta: float) -> void:
 func _tick_timers(delta: float) -> void:
 	for slot in _cooldowns.keys():
 		_cooldowns[slot] = maxf(_cooldowns[slot] - delta, 0.0)
+	if _basic_recover_left > 0.0:
+		_basic_recover_left -= delta
+	if _buffer_left > 0.0:
+		_buffer_left -= delta
+		if _buffer_left <= 0.0:
+			_buffered_action = 0
+		elif state == State.FREE:
+			var action := _buffered_action
+			var can_fire := (action >= 1 and _cooldowns.get(action, 0.0) <= 0.0) \
+				or (action == -1 and _basic_recover_left <= 0.0)
+			if can_fire:
+				_buffered_action = 0
+				_buffer_left = 0.0
+				if action == -1:
+					cmd_basic_attack()
+				else:
+					cmd_use_skill(action)
 	if _chain_timer > 0.0:
 		_chain_timer -= delta
 		if _chain_timer <= 0.0:
@@ -218,8 +239,12 @@ func cmd_toggle_combo_mode() -> void:
 		combo_mode_changed.emit(true)
 
 ## Espaço: cadeia de 3 golpes (50/55/70) — encadeia apertando no ritmo.
+## Apertar durante a ação anterior enfileira (input buffering).
 func cmd_basic_attack() -> void:
-	if state != State.FREE or combo.active:
+	if combo.active:
+		return
+	if state != State.FREE or _basic_recover_left > 0.0:
+		_buffer_action(-1)
 		return
 	if not _has_live_target():
 		skill_failed.emit(0, "no_target")
@@ -239,7 +264,9 @@ func cmd_basic_attack() -> void:
 	basic_attack_performed.emit(idx)
 	_chain_index = (idx + 1) % BASIC_DAMAGE.size()
 	_chain_timer = CHAIN_WINDOW
-	await get_tree().create_timer(BASIC_RECOVER / speed).timeout
+	# recuperação não trava o estado: skill cancela o final do golpe (fluidez);
+	# só o próximo básico espera a recuperação
+	_basic_recover_left = BASIC_RECOVER / speed
 	if state == State.ATTACKING:
 		state = State.FREE
 
@@ -250,10 +277,14 @@ func cmd_use_skill(slot: int) -> void:
 		return
 	var sk := skills[i]
 	if state != State.FREE:
-		skill_failed.emit(slot, "busy")
+		_buffer_action(slot)
 		return
 	if _cooldowns.get(slot, 0.0) > 0.0:
-		skill_failed.emit(slot, "cooldown")
+		# cooldown quase no fim: enfileira em vez de recusar
+		if _cooldowns[slot] <= BUFFER_WINDOW:
+			_buffer_action(slot)
+		else:
+			skill_failed.emit(slot, "cooldown")
 		return
 	if mp < sk.mp_cost:
 		skill_failed.emit(slot, "no_mp")
@@ -295,6 +326,10 @@ func cmd_use_skill(slot: int) -> void:
 			_do_dash(sk, bonus)
 		SkillData.Type.BUFF:
 			_do_buff(sk, instant)
+
+func _buffer_action(action: int) -> void:
+	_buffered_action = action
+	_buffer_left = BUFFER_WINDOW
 
 # ------------------------------------------------------------------
 # Execução das skills

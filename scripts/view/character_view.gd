@@ -19,11 +19,24 @@ func _ready() -> void:
 	sim.dealt_damage.connect(_on_dealt_damage)
 	sim.buff_changed.connect(_on_buff_changed)
 
+func _process(delta: float) -> void:
+	# inclina o corpo na direção do movimento (fluidez visual)
+	var hv := Vector3(sim.velocity.x, 0.0, sim.velocity.z)
+	var local := sim.global_transform.basis.inverse() * hv
+	var t := minf(10.0 * delta, 1.0)
+	rotation.x = lerpf(rotation.x, local.z / sim.move_speed * 0.1, t)
+	rotation.z = lerpf(rotation.z, -local.x / sim.move_speed * 0.08, t)
+
 func _on_basic_attack(chain_index: int) -> void:
 	_play_or_punch("attack_%d" % (chain_index + 1), 1.0 + 0.08 * chain_index)
 
-func _on_skill_used(slot: int, _skill: SkillData) -> void:
+func _on_skill_used(slot: int, skill: SkillData) -> void:
 	_play_or_punch("skill_%d" % slot, 1.25)
+	if slot == 2:
+		# giro do Whirlwind: o corpo roda enquanto o canal dura
+		var tw := create_tween()
+		tw.tween_property(self, "rotation:y", rotation.y + TAU * 4.0, skill.duration)
+		tw.tween_callback(func(): rotation.y = 0.0)
 
 ## Hit stop e screen shake: o "peso" do combate.
 func _on_dealt_damage(_victim: Node3D, _amount: float, is_crit: bool, heavy: bool) -> void:
