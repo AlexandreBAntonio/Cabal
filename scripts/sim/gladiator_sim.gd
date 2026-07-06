@@ -79,10 +79,25 @@ var _rng := RandomNumberGenerator.new()
 @onready var _hitbox_shape: CollisionShape3D = $SkillHitbox/CollisionShape3D
 
 func _ready() -> void:
+	_heal_skill_resources()
 	hp = max_hp
 	mp = max_mp
 	hp_changed.emit(hp, max_hp)
 	mp_changed.emit(mp, max_mp)
+
+## Workaround: se algum .tres carregou sem o script SkillData (cache de
+## import velho/corrompido), recarrega direto do disco ignorando o cache.
+func _heal_skill_resources() -> void:
+	for i in skills.size():
+		var res: Resource = skills[i]
+		if res == null or res is SkillData:
+			continue
+		if res.resource_path != "":
+			var fresh := ResourceLoader.load(res.resource_path, "", ResourceLoader.CACHE_MODE_IGNORE)
+			if fresh is SkillData:
+				skills[i] = fresh as SkillData
+				continue
+		push_warning("Skill do slot %d carregou sem script SkillData: %s" % [i + 1, str(res.resource_path)])
 
 func _physics_process(delta: float) -> void:
 	_tick_timers(delta)

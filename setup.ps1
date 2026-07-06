@@ -29,6 +29,11 @@ New-Item -ItemType Directory -Force -Path $Dest | Out-Null
 Copy-Item -Path (Join-Path $inner.FullName '*') -Destination $Dest -Recurse -Force
 Remove-Item -Recurse -Force $tmp
 
+# Limpa o cache de import do Godot: evita resources/scripts obsoletos
+# quando os arquivos do projeto mudam por fora do editor.
+$cache = Join-Path $Dest '.godot'
+if (Test-Path $cache) { Remove-Item -Recurse -Force $cache }
+
 # --- 2/3: Godot portátil ---
 if (Test-Path $GodotExe) {
     Write-Host '[2/3] Godot ja presente, pulando download.'

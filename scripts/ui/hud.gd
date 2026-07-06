@@ -193,8 +193,10 @@ func _make_slot(index: int) -> Control:
 	key.add_theme_font_size_override("font_size", 14)
 	panel.add_child(key)
 	var skill_name := Label.new()
-	var sk: SkillData = sim.skills[index] if index < sim.skills.size() else null
-	skill_name.text = sk.display_name.left(9) if sk != null else ""
+	# acesso defensivo: se o .tres carregou sem o script (cache de import
+	# corrompido), mostra slot vazio em vez de quebrar a HUD inteira
+	var sk: Resource = sim.skills[index] if index < sim.skills.size() else null
+	skill_name.text = (sk as SkillData).display_name.left(9) if sk is SkillData else ""
 	skill_name.position = Vector2(3, SLOT_SIZE.y - 20)
 	skill_name.add_theme_font_size_override("font_size", 10)
 	panel.add_child(skill_name)
