@@ -1,21 +1,10 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/sim/dummy_sim.gd" id="1_sim"]
 [ext_resource type="Script" path="res://scripts/view/dummy_view.gd" id="2_view"]
+[ext_resource type="Script" path="res://scripts/view/dummy_rig.gd" id="3_rig"]
 
 [sub_resource type="CapsuleShape3D" id="shape_body"]
-radius = 0.5
-height = 2.0
-
-[sub_resource type="StandardMaterial3D" id="mat_dummy"]
-albedo_color = Color(0.78, 0.32, 0.22, 1)
-metallic = 0.15
-roughness = 0.55
-rim_enabled = true
-rim = 0.4
-rim_tint = 0.2
-
-[sub_resource type="CapsuleMesh" id="mesh_body"]
 radius = 0.5
 height = 2.0
 
@@ -48,13 +37,11 @@ shape = SubResource("shape_body")
 [node name="View" type="Node3D" parent="."]
 script = ExtResource("2_view")
 
-[node name="Mesh" type="MeshInstance3D" parent="View"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("mesh_body")
-surface_material_override/0 = SubResource("mat_dummy")
+[node name="Rig" type="Node3D" parent="View"]
+script = ExtResource("3_rig")
 
 [node name="BarAnchor" type="Node3D" parent="View"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
 
 [node name="Bg" type="MeshInstance3D" parent="View/BarAnchor"]
 mesh = SubResource("mesh_bar")
