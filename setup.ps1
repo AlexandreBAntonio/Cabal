@@ -46,10 +46,16 @@ if (Test-Path $GodotExe) {
 
 # --- 3/3: importar e rodar o jogo direto ---
 # passada do editor em headless: constrói o cache de classes globais
-# (class_name) que o import simples não gera em projeto recém-limpo
+# (class_name) que o import simples não gera em projeto recém-limpo.
+# Saída vai para arquivos de log (o Godot imprime ruído inofensivo ao sair).
 Write-Host '[3/3] Importando recursos e abrindo o jogo...'
-& $GodotExe --headless --path $Dest -e --quit *> $null
-& $GodotExe --headless --path $Dest --import *> $null
+$log = Join-Path $env:TEMP 'cabal_import'
+Start-Process -FilePath $GodotExe -ArgumentList "--headless --path `"$Dest`" -e --quit" `
+    -Wait -WindowStyle Hidden `
+    -RedirectStandardOutput "$log-1.log" -RedirectStandardError "$log-1.err.log"
+Start-Process -FilePath $GodotExe -ArgumentList "--headless --path `"$Dest`" --import" `
+    -Wait -WindowStyle Hidden `
+    -RedirectStandardOutput "$log-2.log" -RedirectStandardError "$log-2.err.log"
 Start-Process -FilePath $GodotExe -ArgumentList "--path `"$Dest`""
 
 Write-Host ''
