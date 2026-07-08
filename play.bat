@@ -4,9 +4,10 @@ cd /d "%~dp0"
 title Cabal ARPG - Sessao 1
 
 REM ------------------------------------------------------------------
-REM Baixa o Godot 4.3 (portatil, oficial) na primeira execucao e abre
-REM o projeto no editor. Nao instala nada no sistema: tudo fica na
-REM pasta .\godot\ dentro do projeto.
+REM play.bat        -> roda o JOGO direto
+REM play.bat editor -> abre o projeto no editor Godot
+REM Na primeira execucao baixa o Godot 4.3 portatil para .\godot\
+REM (nada e instalado no sistema).
 REM ------------------------------------------------------------------
 
 set GODOT_EXE=godot\Godot_v4.3-stable_win64.exe
@@ -33,6 +34,12 @@ if not exist "%GODOT_EXE%" (
 )
 
 :run
-echo  Abrindo o projeto no editor Godot (aperte F5 para jogar)...
-start "" "%GODOT_EXE%" --path . -e
+if /i "%1"=="editor" (
+  echo  Abrindo o editor Godot...
+  start "" "%GODOT_EXE%" --path . -e
+  exit /b 0
+)
+echo  Importando recursos (rapido) e abrindo o jogo...
+"%GODOT_EXE%" --headless --path . --import >nul 2>&1
+start "" "%GODOT_EXE%" --path .
 exit /b 0

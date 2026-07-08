@@ -44,10 +44,11 @@ if (Test-Path $GodotExe) {
     Remove-Item (Join-Path $Dest 'godot.zip')
 }
 
-# --- 3/3: abrir o editor ---
-Write-Host '[3/3] Abrindo o projeto no editor Godot... (aperte F5 para jogar)'
-Start-Process -FilePath $GodotExe -ArgumentList "--path `"$Dest`" -e"
+# --- 3/3: importar e rodar o jogo direto ---
+Write-Host '[3/3] Importando recursos e abrindo o jogo...'
+& $GodotExe --headless --path $Dest --import *> $null
+Start-Process -FilePath $GodotExe -ArgumentList "--path `"$Dest`""
 
 Write-Host ''
 Write-Host "Pronto! Projeto instalado em $Dest" -ForegroundColor Green
-Write-Host 'Nas proximas vezes, use o play.bat dessa pasta (ou rode este comando de novo).'
+Write-Host 'Para jogar de novo: play.bat nessa pasta. Para abrir o editor: play.bat editor'
