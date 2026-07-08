@@ -45,7 +45,10 @@ if (Test-Path $GodotExe) {
 }
 
 # --- 3/3: importar e rodar o jogo direto ---
+# passada do editor em headless: constrói o cache de classes globais
+# (class_name) que o import simples não gera em projeto recém-limpo
 Write-Host '[3/3] Importando recursos e abrindo o jogo...'
+& $GodotExe --headless --path $Dest -e --quit *> $null
 & $GodotExe --headless --path $Dest --import *> $null
 Start-Process -FilePath $GodotExe -ArgumentList "--path `"$Dest`""
 

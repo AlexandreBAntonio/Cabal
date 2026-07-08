@@ -40,6 +40,8 @@ if /i "%1"=="editor" (
   exit /b 0
 )
 echo  Importando recursos (rapido) e abrindo o jogo...
+REM passada do editor headless: constroi o cache de classes globais (class_name)
+"%GODOT_EXE%" --headless --path . -e --quit >nul 2>&1
 "%GODOT_EXE%" --headless --path . --import >nul 2>&1
 start "" "%GODOT_EXE%" --path .
 exit /b 0
